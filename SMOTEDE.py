@@ -39,7 +39,8 @@ class SMOTEDE:
                  rvalue_down_range=0.1,
                  X=None,
                  y=None,
-                 classifer=None):
+                 classifer=None,
+                 performancemeasure='FPA'):
 
         self.NP = NP   # 种群数量
         self.F = F   # 缩放因子
@@ -52,6 +53,7 @@ class SMOTEDE:
         self.rvalue_down_range = rvalue_down_range
         self.kRange = kRange
         self.classifer=classifer
+        self.performancemeasure = performancemeasure
 
         self.np_list = self.initialtion()
 
@@ -234,8 +236,28 @@ class SMOTEDE:
         """
         def getFPA(model, smote_X, smote_y, validX, validy):
             trainmodel = model.fit(smote_X, smote_y)
-            model_pred_y = np.around(trainmodel.predict(validX))
-            model_fpa = PerformanceMeasure(validy, model_pred_y).FPA()
+            model_pred_y = trainmodel.predict(validX)
+            if(self.performancemeasure=='FPA'):
+                model_fpa = PerformanceMeasure(validy, model_pred_y).FPA()
+            elif (self.performancemeasure=='PofB20'):
+                model_fpa = PerformanceMeasure(validy, model_pred_y).PofB20(0.2)
+            elif (self.performancemeasure=='PofB5'):
+                model_fpa = PerformanceMeasure(validy, model_pred_y).PofB20(0.05)
+            elif (self.performancemeasure=='PofB10'):
+                model_fpa = PerformanceMeasure(validy, model_pred_y).PofB20(0.1)
+            #如果这里做了特征选择，这里的codeN就不是第十个特征了。
+            elif (self.performancemeasure=='popt'):
+                validcodeN = [i[10] for i in validX]
+                model_fpa = PerformanceMeasure(validy, model_pred_y).OPT(validcodeN)
+            elif (self.performancemeasure=='PofBS20'):
+                validcodeN = [i[10] for i in validX]
+                model_fpa = PerformanceMeasure(validy, model_pred_y).PofBS20(validcodeN,0.2)
+            elif (self.performancemeasure == 'PofBS5'):
+                validcodeN = [i[10] for i in validX]
+                model_fpa = PerformanceMeasure(validy, model_pred_y).PofBS20(validcodeN, 0.05)
+            elif (self.performancemeasure == 'PofBS10'):
+                validcodeN = [i[10] for i in validX]
+                model_fpa = PerformanceMeasure(validy, model_pred_y).PofBS20(validcodeN, 0.1)
             return model_fpa
 
         ratio = smoteParam[0]
