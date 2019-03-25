@@ -5,12 +5,9 @@ import random
 
 class RUS:
     def __init__(self, X, Y, ratio=0.5):
-        """ ratio: [0.5, 1.0, 2.0, 4.0]
-        """
         self.X = X
         self.Y = Y
-        # self.ratio is the desired ratio between the rare instances and the normal instances
-        # defectiveCount /  Non_defectiveCount
+        # self.ratio is the desired percentage of the rare instances, default 0.5
         self.ratio = ratio
 
     # 这个函数只返回合成的数据
